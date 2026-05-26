@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RRAOULSKI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #222222;
+    --accent: #c8f000;
+    --accent2: #ff3c00;
+    --text: #e8e8e8;
+    --muted: #555555;
+    --mono: 'Space Mono', monospace;
+    --display: 'Bebas Neue', sans-serif;
+    --serif: 'DM Serif Display', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.6;
+    cursor: crosshair;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(8px);
+  }
+
+  .nav-logo {
+    font-family: var(--display);
+    font-size: 22px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-left {
+    padding: 80px 40px 80px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--border);
+  }
+
+  .hero-tag {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 40px;
+  }
+
+  .hero-title {
+    font-family: var(--display);
+    font-size: clamp(80px, 10vw, 140px);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    mix-blend-mode: normal;
+  }
+
+  .hero-title .accent { color: var(--accent); }
+
+  .hero-subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--muted);
+    margin-top: 40px;
+    max-width: 380px;
+    line-height: 1.5;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 60px;
+  }
+
+  .hero-meta-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  .hero-right {
+    padding: 80px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-statement {
+    font-family: var(--serif);
+    font-size: clamp(24px, 3vw, 38px);
+    line-height: 1.3;
+    color: var(--text);
+    max-width: 480px;
+  }
+
+  /* [DEIN TEXT HIER] placeholder style */
+  .placeholder {
+    color: var(--accent2);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-style: normal;
+    letter-spacing: 0.1em;
+    display: block;
+    margin: 16px 0;
+    opacity: 0.7;
+  }
+
+  .hero-coords {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-align: right;
+  }
+
+  /* TICKER */
+  .ticker {
+    background: var(--accent);
+    color: var(--bg);
+    padding: 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .ticker-inner {
+    display: inline-flex;
+    animation: ticker 20s linear infinite;
+    gap: 0;
+  }
+
+  .ticker-item {
+    font-family: var(--display);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    padding: 0 40px;
+  }
+
+  .ticker-sep {
+    color: var(--bg);
+    opacity: 0.4;
+  }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* WORK SECTION */
+  .section {
+    padding: 100px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 60px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-size: 48px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+
+  .section-count {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+  }
+
+  /* GRID */
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2px;
+  }
+
+  .work-item {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+    cursor: crosshair;
+  }
+
+  .work-item:nth-child(1) { grid-column: span 7; grid-row: span 2; aspect-ratio: 3/4; }
+  .work-item:nth-child(2) { grid-column: span 5; aspect-ratio: 1/1; }
+  .work-item:nth-child(3) { grid-column: span 5; aspect-ratio: 1/1; }
+  .work-item:nth-child(4) { grid-column: span 4; aspect-ratio: 3/4; }
+  .work-item:nth-child(5) { grid-column: span 4; aspect-ratio: 3/4; }
+  .work-item:nth-child(6) { grid-column: span 4; aspect-ratio: 3/4; }
+
+  .work-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(20%);
+    transition: filter 0.4s, transform 0.6s;
+    display: block;
+  }
+
+  .work-item:hover img {
+    filter: grayscale(0%);
+    transform: scale(1.03);
+  }
+
+  .work-item-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+  }
+
+  .work-item:hover .work-item-overlay { opacity: 1; }
+
+  .work-item-title {
+    font-family: var(--display);
+    font-size: 20px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+
+  .work-item-tag {
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* PLACEHOLDER WORK ITEMS */
+  .work-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: 1px dashed var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .work-placeholder-num {
+    font-family: var(--display);
+    font-size: 48px;
+    color: var(--border);
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-left {}
+
+  .about-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+
+  .about-text {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 32px;
+  }
+
+  .about-body {
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: 12px;
+    max-width: 440px;
+  }
+
+  .about-right {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cv-line {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 20px;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+  }
+
+  .cv-year { color: var(--muted); }
+  .cv-role { color: var(--text); }
+  .cv-place { color: var(--muted); font-size: 10px; text-align: right; }
+
+  /* CONTACT */
+  .contact-section {
+    padding: 100px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+  }
+
+  .contact-title {
+    font-family: var(--display);
+    font-size: clamp(60px, 8vw, 120px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+  }
+
+  .contact-title .line2 { color: var(--accent); }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .contact-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text);
+    transition: color 0.2s;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .contact-link:hover { color: var(--accent); }
+
+  .contact-link-arrow {
+    font-size: 18px;
+    transition: transform 0.2s;
+  }
+
+  .contact-link:hover .contact-link-arrow {
+    transform: translate(4px, -4px);
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-copy {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+
+  .footer-logo {
+    font-family: var(--display);
+    font-size: 16px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-title { animation: fadeUp 0.8s ease forwards; }
+  .hero-subtitle { animation: fadeUp 0.8s 0.15s ease both; }
+  .hero-statement { animation: fadeUp 0.8s 0.3s ease both; }
+
+  /* SCAN LINE */
+  .hero-right::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.3;
+    animation: scan 4s linear infinite;
+  }
+
+  @keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-left { padding: 60px 20px 40px; border-right: none; border-bottom: 1px solid var(--border); }
+    .hero-right { padding: 40px 20px; }
+    .section { padding: 60px 20px; }
+    .work-grid { grid-template-columns: 1fr 1fr; }
+    .work-item:nth-child(n) { grid-column: span 1; grid-row: span 1; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .contact-section { grid-template-columns: 1fr; gap: 40px; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+
+  <div class="hello-center" id="hello-center">Hallo</div>
+</div>
+
+<nav>
+  <a href="#" class="nav-logo">RRAOULSKI</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    HAMBURG — AVAILABLE
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div>
+      <div class="hero-tag">// Portfolio 2026 — Visual & Concept</div>
+      <h1 class="hero-title">
+        RRAOUL<br>
+        <span class="accent">SKI</span>
+      </h1>
+      <p class="hero-subtitle">
+        Chaos manifested.
+      </p>
+    </div>
+    <div class="hero-meta">
+      <div class="hero-meta-line">
+        <span>LOCATION</span>
+        <span>Hamburg, DE</span>
+      </div>
+      <div class="hero-meta-line">
+        <span>DISCIPLINES</span>
+        <span>Illustration — Design — Photography</span>
+      </div>
+      <div class="hero-meta-line">
+        <span>STATUS</span>
+        <span>Open to work</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <p class="hero-statement">
+      I work at the intersection of ideas and the stubborn reality that ideas have to actually function. Ten years of live production — ballet stages, cruise ships, international tours — taught me that concept without execution is just noise. So I do both.
+    </p>
+    <div class="hero-coords">
+      53.5753° N, 10.0153° E<br>
+      <span style="color: var(--muted)">RRAOULSKI.COM</span>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item">ILLUSTRATION</span>
+    <span class="ticker-item ticker-sep">///</span>
+    <span class="ticker-item">CONCEPT</span>
+    <span class="ticker-item ticker-sep">///</span>
+    <span class="ticker-item">PHOTOGRAPHY</span>
+    <span class="ticker-item ticker-sep">///</span>
+    <span class="ticker-item">POSTER DESIGN</span>
+    <span class="ticker-item ticker-sep">///</span>
+    <span class="ticker-item">NON LINEAR</span>
+    <span class="ticker-item ticker-sep">///</span>
+    <span class="ticker-item">HAMBURG</span>
+    <span class="ticker-item ticker-sep">///</span>
+    <span class="ticker-item">ILLUSTRATION</span>
+    <span class="ticker-item ticker-sep">///</span>
+    <span class="ticker-item">CONCEPT</span>
+    <span class="ticker-item ticker-sep">///</span>
+    <span class="ticker-item">PHOTOGRAPHY</span>
+    <span class="ticker-item ticker-sep">///</span>
+    <span class="ticker-item">POSTER DESIGN</span>
+    <span class="ticker-item ticker-sep">///</span>
+    <span class="ticker-item">NON LINEAR</span>
+    <span class="ticker-item ticker-sep">///</span>
+    <span class="ticker-item">HAMBURG</span>
+    <span class="ticker-item ticker-sep">///</span>
+  </div>
+</div>
+
+<!-- WORK -->
+<section class="section" id="work">
+  <div class="section-header">
+    <h2 class="section-title">SELECTED WORK</h2>
+    <span class="section-count">// 006 PROJECTS</span>
+  </div>
+
+  <div class="work-grid">
+
+    <!-- Item 1 — groß links -->
+    <div class="work-item">
+      <div class="work-placeholder">
+        <div class="work-placeholder-num">01</div>
+        <div>Dein stärkstes Bild hier<br>z.B. Rädieschen</div>
+      </div>
+      <div class="work-item-overlay">
+        <div class="work-item-title">RÄDIESCHEN</div>
+        <div class="work-item-tag">Illustration — Ink on Paper</div>
+      </div>
+    </div>
+
+    <!-- Item 2 -->
+    <div class="work-item">
+      <div class="work-placeholder">
+        <div class="work-placeholder-num">02</div>
+        <div>Bikes Bikes Bikes</div>
+      </div>
+      <div class="work-item-overlay">
+        <div class="work-item-title">BIKES BIKES BIKES</div>
+        <div class="work-item-tag">Poster — 2025</div>
+      </div>
+    </div>
+
+    <!-- Item 3 -->
+    <div class="work-item">
+      <div class="work-placeholder">
+        <div class="work-placeholder-num">03</div>
+        <div>Flow Poster</div>
+      </div>
+      <div class="work-item-overlay">
+        <div class="work-item-title">FLOW</div>
+        <div class="work-item-tag">Editorial Design</div>
+      </div>
+    </div>
+
+    <!-- Item 4 -->
+    <div class="work-item">
+      <div class="work-placeholder">
+        <div class="work-placeholder-num">04</div>
+        <div>Duck on the Moon</div>
+      </div>
+      <div class="work-item-overlay">
+        <div class="work-item-title">QB_1732/L</div>
+        <div class="work-item-tag">Collage — Digital</div>
+      </div>
+    </div>
+
+    <!-- Item 5 -->
+    <div class="work-item">
+      <div class="work-placeholder">
+        <div class="work-placeholder-num">05</div>
+        <div>Bus Foto / Fotografie</div>
+      </div>
+      <div class="work-item-overlay">
+        <div class="work-item-title">SUBWAY_01</div>
+        <div class="work-item-tag">Photography</div>
+      </div>
+    </div>
+
+    <!-- Item 6 -->
+    <div class="work-item">
+      <div class="work-placeholder">
+        <div class="work-placeholder-num">06</div>
+        <div>Weitere Arbeit</div>
+      </div>
+      <div class="work-item-overlay">
+        <div class="work-item-title">—</div>
+        <div class="work-item-tag">—</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="section-header">
+    <h2 class="section-title">ABOUT</h2>
+    <span class="section-count">// RAOUL KRÄMER</span>
+  </div>
+
+  <div class="about-grid">
+    <div class="about-left">
+      <div class="about-label">// Who</div>
+      <p class="about-text">
+        I connect things that aren't supposed to connect. That's not a skill I learned — it's just how the brain runs.
+      </p>
+      <p class="about-body">
+        Based in Hamburg. Working in the space between live experience, visual language, and whatever idea showed up at 2am that I couldn't shake.<br><br>By day I coordinate complex productions for Hamburg Ballett — managing the gap between what a director imagines and what actually fits on a stage in a city where nobody speaks your language. Before that, entertainment at sea. Before that, freelance. All of it: high stakes, fast decisions, zero tolerance for vague.<br><br>Parallel to all of this — drawing, photographing, designing. Not as a side hobby. As a second language. I think in images as naturally as in words, and I've stopped pretending those two things are separate.<br><br>I don't have a linear career. I have a body of work.
+      </p>
+    </div>
+
+    <div class="about-right">
+      <div class="about-label">// Experience</div>
+      <div class="cv-line">
+        <span class="cv-year">2023—</span>
+        <span class="cv-role">Hamburg Ballett / Hamburgische Staatsoper</span>
+        <span class="cv-place">HH</span>
+      </div>
+      <div class="cv-line">
+        <span class="cv-year">2020—22</span>
+        <span class="cv-role">MS Europa 2 / Hapag-Lloyd Cruises</span>
+        <span class="cv-place">Worldwide</span>
+      </div>
+      <div class="cv-line">
+        <span class="cv-year">2018—20</span>
+        <span class="cv-role">Freelance — Live Production</span>
+        <span class="cv-place">DE</span>
+      </div>
+      <div class="cv-line">
+        <span class="cv-year">—</span>
+        <span class="cv-role">Kulturzentrum KFZ Marburg</span>
+        <span class="cv-place">MR</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div>
+    <h2 class="contact-title">
+      LET'S<br>
+      <span class="line2">TALK.</span>
+    </h2>
+  </div>
+
+  <div class="contact-links">
+    <a href="mailto:raoulkraemer@pm.me" class="contact-link">
+      <span>raoulkraemer@pm.me</span>
+      <span class="contact-link-arrow">↗</span>
+    </a>
+    <a href="https://www.behance.net/d7ba2cca" target="_blank" class="contact-link">
+      <span>Behance</span>
+      <span class="contact-link-arrow">↗</span>
+    </a>
+    <a href="https://instagram.com/rraoulski" target="_blank" class="contact-link">
+      <span>Instagram</span>
+      <span class="contact-link-arrow">↗</span>
+    </a>
+    <a href="#" class="contact-link" style="color: var(--muted);">
+      <span>LinkedIn</span>
+      <span class="contact-link-arrow">↗</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-copy">© 2026 RRAOULSKI — ALL RIGHTS RESERVED</span>
+  <span class="footer-logo">RRAOULSKI.COM</span>
+</footer>
+
+
+
+
+</body>
+</html>
